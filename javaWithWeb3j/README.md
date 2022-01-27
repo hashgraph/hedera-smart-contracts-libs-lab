@@ -17,19 +17,21 @@ The example runs through the following steps
 
 ```shell
 ./gradlew build
-
+./gradlew runExample
 ```
 
 will output
 
 ```shell
-Deploying the contract
-new contract ID: 0.0.29562231
+> Task :runExample
+Deploying contract
+contract bytecode file: 0.0.29563673
+new contract ID: 0.0.29563674
 
 get_message Query
 Hello Hedera
 
-Calling set_message with 'Hello again' parameter value
+Calling set_message with 'Hello again parameter value
 
 get_message Query
 Hello again
@@ -37,16 +39,5 @@ Hello again
 get_message transaction
 Hello again
 
-Getting event(s) from record
-Calling set_message to trigger new event
 
-get_message Query
-1/27/2022, 4:09:47 PM
-Record event: from '0.0.11093' update to '1/27/2022, 4:09:47 PM'
-
-Getting event(s) from mirror
-Waiting 10s to allow transaction propagation to mirror
-Mirror event(s): from '0.0.11093' update to 'Hello Hedera'
-Mirror event(s): from '0.0.11093' update to 'Hello again'
-Mirror event(s): from '0.0.11093' update to '1/27/2022, 4:09:47 PM'
 ```
