@@ -13,7 +13,6 @@ import axios from "axios";
 
 dotenv.config({path : '../.env'});
 
-let bytecode;
 let abi;
 let client = Client.forTestnet();
 const constructMessage = 'Hello Hedera';
@@ -25,8 +24,6 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
  * Runs each step of the example one after the other
  */
 async function main() {
-    // Import the compiled contract
-    bytecode = JSON.parse(fs.readFileSync('../contracts/bytecode.json', 'utf8'));
 
     // Import the ABI
     abi = JSON.parse(fs.readFileSync('../contracts/abi.json', 'utf8'));
@@ -65,6 +62,8 @@ async function main() {
 async function deployContract() {
     console.log(`\nDeploying the contract`);
 
+    // Import the compiled contract
+    const bytecode = JSON.parse(fs.readFileSync('../contracts/bytecode.json', 'utf8'));
     // The contract bytecode is located on the `object` field
     const contractByteCode = /** @type {string} */ (bytecode.object);
 

@@ -13,7 +13,6 @@ import Web3 from "web3";
 
 dotenv.config({path : '../.env'});
 
-let bytecode;
 let abi;
 let client = Client.forTestnet();
 const constructMessage = 'Hello Hedera';
@@ -25,9 +24,6 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
  * Runs each step of the example one after the other
  */
 async function main() {
-    // Import the compiled contract
-    bytecode = JSON.parse(fs.readFileSync('../contracts/bytecode.json', 'utf8'));
-
     // Import the ABI
     abi = JSON.parse(fs.readFileSync('../contracts/abi.json', 'utf8'));
 
@@ -62,6 +58,9 @@ async function main() {
 async function deployContract() {
     console.log(`\nDeploying the contract`);
 
+    // Import the compiled contract
+    const bytecode = JSON.parse(fs.readFileSync('../contracts/bytecode.json', 'utf8'));
+
     // The contract bytecode is located on the `object` field
     const contractByteCode = /** @type {string} */ (bytecode.object);
 
@@ -87,7 +86,7 @@ async function deployContract() {
     // Create the contract
     const contractTransactionResponse = await new ContractCreateTransaction()
         // Set the parameters that should be passed to the contract constructor
-        // using the output from the ethers.js library
+        // using the output from the web3.js library
         .setConstructorParameters(constructorParametersAsUint8Array)
         // Set gas to create the contract
         .setGas(100_000)
@@ -174,7 +173,7 @@ async function callGetMessage(contractId) {
     // a record contains the output of the function
     const record = await transaction.getRecord(client);
     // the result of the function call is in record.contractFunctionResult.bytes
-    // let`s parse it using ethers.js
+    // let`s parse it using web3.js
     const results = decodeFunctionResult('get_message', record.contractFunctionResult.bytes);
     console.log(results[0]);
 }
