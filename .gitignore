@@ -24,3 +24,5 @@ hs_err_pid*
 .env
 .idea
 node_modules
+.gradle
+build

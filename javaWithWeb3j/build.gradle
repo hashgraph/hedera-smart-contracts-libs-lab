@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id "org.web3j" version "4.8.9"
+}
+
+group 'com.hedera'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        solidity {
+            srcDir {
+                "src/main/java/solidity"
+            }
+            output.resourcesDir = file('out/bin/compiledSol')
+        }
+    }
+}
+
+dependencies {
+    implementation "com.hedera.hashgraph:sdk:2.4.0"
+    implementation "com.google.code.gson:gson:2.8.9"
+    implementation "org.slf4j:slf4j-simple:1.7.32"
+    implementation "io.grpc:grpc-netty-shaded:1.43.2"
+    implementation "io.github.cdimascio:java-dotenv:5.2.2"
+    implementation "org.web3j:core:5.0.0"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+web3j {
+    generatedPackageName = 'com.hedera.examples'
+    generatedFilesBaseDir = "$buildDir/custom/destination"
+    excludedContracts = ['Ownable']
+    useNativeJavaTypes = false
+}
+
+test {
+    useJUnitPlatform()
+}
