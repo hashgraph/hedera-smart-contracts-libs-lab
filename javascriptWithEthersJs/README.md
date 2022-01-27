@@ -1,8 +1,9 @@
 # Hedera Javascript SDK with Ethers.js
 
-Example use of the Hedera JavaScript SDK along with the Ethers.js library.
+Example use of the Hedera JavaScript SDK along with some components of the Ethers.js library.
 
 The current version of the JavaScript SDK lacks some supporting features for smart contracts, this example shows how to combine elements of Ethers.js with the SDK to show how ethers.js may be used to:
+
 * generate function calls using the contract's ABI
 * interpret contract responses using the contract's ABI
 * interpret event information using the contract's ABI
@@ -11,6 +12,34 @@ The current version of the JavaScript SDK lacks some supporting features for sma
 
 * Node v16.13.0
 * Yarn v1.22.10
+
+## Partial use of Ethers.js
+
+While importing the complete `ethers.js` library into the project would work, the `ethers.js` library is built from modular components meaning we only need to import a single component from the library to enable us to benefit from ABI parsing.
+
+The project therefore imports `"@ethersproject/abi": "^5.5.0"` and uses the `Interface` class as follows
+
+```javascript
+const abiInterface = new Interface(abi);
+```
+
+where `abi` is the json representation of a contract's abi.
+
+consequently
+
+```javascript
+abiInterface.encodeFunctionData(functionName, parameterArray)
+```
+
+will create the necessary solidity call parameter from a given function name and array of parameters
+
+and
+
+```javascript
+abiInterface.decodeFunctionResult(functionName, result);
+```
+
+will decode the result of a contract call for a given function name
 
 ## Running the examples
 

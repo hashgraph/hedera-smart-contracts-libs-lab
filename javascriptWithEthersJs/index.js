@@ -6,7 +6,7 @@ import {
     AccountId, Hbar, ContractExecuteTransaction, ContractCallQuery,
 } from "@hashgraph/sdk";
 
-import { ethers } from "ethers";
+import { Interface } from "@ethersproject/abi";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import axios from "axios";
@@ -21,6 +21,9 @@ let abiInterface;
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+/**
+ * Runs each step of the example one after the other
+ */
 async function main() {
     // Import the compiled contract
     bytecode = JSON.parse(fs.readFileSync('./bytecode.json', 'utf8'));
@@ -29,7 +32,7 @@ async function main() {
     abi = JSON.parse(fs.readFileSync('./abi.json', 'utf8'));
 
     // Setup an ethers.js interface using the abi
-    abiInterface = new ethers.utils.Interface(abi);
+    abiInterface = new Interface(abi);
 
     client.setOperator(
         AccountId.fromString(process.env.OPERATOR_ID),
@@ -55,6 +58,10 @@ async function main() {
     await getEventsFromMirror(contractId);
 }
 
+/**
+ * Deploys the contract to Hedera by first creating a file containing the bytecode, then creating a contract from the resulting
+ * FileId, specifying a parameter value for the constructor and returning the resulting ContractId
+ */
 async function deployContract() {
     console.log(`\nDeploying the contract`);
 
@@ -102,6 +109,12 @@ async function deployContract() {
     return contractId;
 }
 
+/**
+ * Invokes the set_message function of the contract
+ * @param contractId
+ * @param newMessage
+ * @returns {Promise<void>}
+ */
 async function callSetMessage(contractId, newMessage) {
     console.log(`\nCalling set_message with '${newMessage}' parameter value`);
 
@@ -119,6 +132,12 @@ async function callSetMessage(contractId, newMessage) {
     await transaction.getReceipt(client);
 }
 
+/**
+ * Invokes the get_message function of the contract using a query
+ * The get_message function doesn't mutate the contract's state, therefore a query can be used
+ * @param contractId
+ * @returns {Promise<void>}
+ */
 async function queryGetMessage(contractId) {
     console.log(`\nget_message Query`);
     // generate function call with function name and parameters
@@ -136,6 +155,13 @@ async function queryGetMessage(contractId) {
     console.log(results);
 }
 
+/**
+ * Invokes the get_message function of the contract using a transaction and uses the resulting record to determine
+ * the returned value from the function
+ * Note: The get_message function doesn't mutate the contract's state, therefore a query could be used, but this shows how to
+ * process return values from a contract function that does mutate contract state using a TransactionRecord
+ * @param contractId
+ */
 async function callGetMessage(contractId) {
     console.log(`\nget_message transaction`);
 
@@ -157,6 +183,11 @@ async function callGetMessage(contractId) {
     console.log(results);
 }
 
+/**
+ * Gets events from a contract function invocation using a TransactionRecord
+ * Note: This function calls the contract's set_message function in order to generate a new event
+ * @param contractId
+ */
 async function getEventsFromRecord(contractId) {
     console.log(`\nGetting event(s) from record`);
 
@@ -203,6 +234,13 @@ async function getEventsFromRecord(contractId) {
     });
 }
 
+/**
+ * Gets all the events for a given ContractId from a mirror node
+ * Note: To particular filtering is implemented here, in practice you'd only want to query for events
+ * in a time range or from a given timestamp for example
+ * @param contractId
+ */
+
 async function getEventsFromMirror(contractId) {
     console.log(`\nGetting event(s) from mirror`);
     console.log(`Waiting 10s to allow transaction propagation to mirror`);
@@ -230,6 +268,11 @@ async function getEventsFromMirror(contractId) {
         });
 }
 
+/**
+ * Helper function to encode function name and parameters that can be used to invoke a contract's function
+ * @param functionName the name of the function to invoke
+ * @param parameterArray an array of parameters to pass to the function
+ */
 function encodeFunctionParameters(functionName, parameterArray) {
     // build the call parameters using ethers.js
     let functionCallAsHexString = abiInterface.encodeFunctionData(functionName, parameterArray);
