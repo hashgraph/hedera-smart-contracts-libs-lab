@@ -16,6 +16,8 @@ The example runs through the following steps
 * Fetches all the events for the contract using a mirror node query
 
 ```shell
+yarn install
+
 node index.js
 ```
 

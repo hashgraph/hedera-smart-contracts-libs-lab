@@ -10,12 +10,12 @@ Smart contract examples in various languages showing use of Hedera SDKs in tande
 
 * Node v16.13.0
 * Yarn v1.22.10
+* Java v14.0.2
 
 ## Setup prior to running the examples
 
 ```shell
-yarn install
-cd ../.env.sample ../.env
+cp .env.sample .env
 ```
 
 edit `.env` file and set your testnet operator id and key
