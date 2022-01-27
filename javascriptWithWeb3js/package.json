@@ -1,6 +1,12 @@
 {
-  "name": "javascriptWithWeb3js",
+  "name": "javascriptWithWeb3Js",
   "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT"
+  "type": "module",
+  "description": "Example use of the Hedera JavaScript SDK along with the Web3.js library",
+  "dependencies": {
+    "@hashgraph/sdk": "2.7.1",
+    "axios": "^0.25.0",
+    "dotenv": "^10.0.0",
+    "web3": "^1.7.0"
+  }
 }
