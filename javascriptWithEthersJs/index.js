@@ -26,10 +26,10 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
  */
 async function main() {
     // Import the compiled contract
-    bytecode = JSON.parse(fs.readFileSync('./bytecode.json', 'utf8'));
+    bytecode = JSON.parse(fs.readFileSync('../contracts/bytecode.json', 'utf8'));
 
     // Import the ABI
-    abi = JSON.parse(fs.readFileSync('./abi.json', 'utf8'));
+    abi = JSON.parse(fs.readFileSync('../contracts/abi.json', 'utf8'));
 
     // Setup an ethers.js interface using the abi
     abiInterface = new Interface(abi);
