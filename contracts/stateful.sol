@@ -2,21 +2,18 @@ pragma solidity ^0.6.12;
 
 contract StatefulContract {
     // sample event
-    event SetMessage(address indexed from, uint8 indexed messageUpdates);
+    event SetMessage(address indexed from, string message);
 
     // the message we're storing
     string message;
-    // counting message updates;
-    uint8 messageUpdates;
 
     constructor(string memory message_) public {
+        emit SetMessage(msg.sender, message_);
         message = message_;
-        messageUpdates = 0;
     }
 
     function set_message(string memory message_) public {
-        messageUpdates = messageUpdates + 1;
-        emit SetMessage(msg.sender, messageUpdates);
+        emit SetMessage(msg.sender, message_);
         message = message_;
     }
 
