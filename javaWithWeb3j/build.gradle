@@ -24,10 +24,10 @@ sourceSets {
 dependencies {
     implementation "com.hedera.hashgraph:sdk:2.4.0"
     implementation "com.google.code.gson:gson:2.8.9"
-    implementation "org.slf4j:slf4j-simple:1.7.32"
     implementation "io.grpc:grpc-netty-shaded:1.43.2"
     implementation "io.github.cdimascio:java-dotenv:5.2.2"
     implementation "org.web3j:core:5.0.0"
+    implementation 'org.slf4j:slf4j-nop:2.0.0-alpha1'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
@@ -38,6 +38,13 @@ web3j {
     generatedFilesBaseDir = "$buildDir/custom/destination"
     excludedContracts = ['Ownable']
     useNativeJavaTypes = false
+}
+
+task runExample(type: JavaExec) {
+    group = "Execution"
+    description = "Runs the example"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.hedera.examples.Example"
 }
 
 test {
