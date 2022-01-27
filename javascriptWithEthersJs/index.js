@@ -83,9 +83,8 @@ async function deployContract() {
     const fileId = fileReceipt.fileId;
 
     // get the constructor parameter
-    let constructParameterAsHexString = abiInterface.encodeDeploy([constructMessage]);
-    // remove the leading "0x"
-    constructParameterAsHexString = constructParameterAsHexString.replace('0x','');
+    // .slice(2) to remove leading '0x'
+    const constructParameterAsHexString = abiInterface.encodeDeploy([constructMessage]).slice(2);
     // convert to a Uint8Array
     const constructorParametersAsUint8Array = Buffer.from(constructParameterAsHexString, 'hex');
     // Create the contract
@@ -275,9 +274,8 @@ async function getEventsFromMirror(contractId) {
  */
 function encodeFunctionParameters(functionName, parameterArray) {
     // build the call parameters using ethers.js
-    let functionCallAsHexString = abiInterface.encodeFunctionData(functionName, parameterArray);
-    // remove the leading "0x"
-    functionCallAsHexString = functionCallAsHexString.replace(`0x`,``);
+    // .slice(2) to remove leading '0x'
+    const functionCallAsHexString = abiInterface.encodeFunctionData(functionName, parameterArray).slice(2);
     // convert to a Uint8Array
     return Buffer.from(functionCallAsHexString, `hex`);
 }
