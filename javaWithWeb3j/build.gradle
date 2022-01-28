@@ -33,12 +33,12 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
-web3j {
-    generatedPackageName = 'com.hedera.examples'
-    generatedFilesBaseDir = "$buildDir/custom/destination"
-    excludedContracts = ['Ownable']
-    useNativeJavaTypes = false
-}
+//web3j {
+//    generatedPackageName = 'com.hedera.examples'
+//    generatedFilesBaseDir = "$buildDir/custom/destination"
+//    excludedContracts = ['Ownable']
+//    useNativeJavaTypes = false
+//}
 
 task runExample(type: JavaExec) {
     group = "Execution"
