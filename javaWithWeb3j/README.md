@@ -23,10 +23,9 @@ The example runs through the following steps
 will output
 
 ```shell
-> Task :runExample
 Deploying contract
-contract bytecode file: 0.0.29563673
-new contract ID: 0.0.29563674
+contract bytecode file: 0.0.29570774
+new contract ID: 0.0.29570775
 
 get_message Query
 Hello Hedera
@@ -39,5 +38,25 @@ Hello again
 get_message transaction
 Hello again
 
+Getting event(s) from record
+Calling set_message to trigger new event
 
+get_message Query
+Fri Jan 28 17:21:53 CET 2022
+
+Events' data
+0x0000000000000000000000000000000000002b55
+Fri Jan 28 17:21:53 CET 2022
+
+
+Getting event(s) from mirror
+Waiting 10s to allow transaction propagation to mirror
+0x0000000000000000000000000000000000002b55
+Hello Hedera
+
+0x0000000000000000000000000000000000002b55
+Hello again
+
+0x0000000000000000000000000000000000002b55
+Fri Jan 28 17:21:53 CET 2022
 ```
