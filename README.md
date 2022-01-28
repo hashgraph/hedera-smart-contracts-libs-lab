@@ -32,5 +32,7 @@ For convenience, the contract was compiled using `Remix` and the output from the
 
 * Javascript SDK with [Ethers.js](https://docs.ethers.io/v5/)
 * Javascript SDK with [web3.js](https://web3js.readthedocs.io/en/v1.7.0/)
+* Javascript SDK with [abi-decoder](https://github.com/ConsenSys/abi-decoder)
+  * Only suitable for event decoding
 * Java SDK with [web3.j](https://docs.web3j.io/4.8.7/)
-* Others TBD (Golang, Javascript with [abi-decoder](https://github.com/ConsenSys/abi-decoder))
+* Others TBD (Golang)
