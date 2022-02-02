@@ -18,7 +18,7 @@ contract StatefulContract {
     }
 
     // return a string
-    function get_message() public view returns (string memory) {
-        return message;
+    function get_message() public view returns (string memory messageOut) {
+        messageOut = message;
     }
 }

@@ -35,7 +35,7 @@
     "outputs": [
       {
         "internalType": "string",
-        "name": "",
+        "name": "messageOut",
         "type": "string"
       }
     ],
