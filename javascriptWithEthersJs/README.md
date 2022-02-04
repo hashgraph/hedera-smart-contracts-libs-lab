@@ -53,29 +53,29 @@ will output
 
 ```shell
 Deploying the contract
-new contract ID: 0.0.29560194
+new contract ID: 0.0.29622176
 
 get_message Query
-[ 'Hello Hedera' ]
+[ 'Hello Hedera', messageOut: 'Hello Hedera' ]
 
 Calling set_message with 'Hello again' parameter value
 
 get_message Query
-[ 'Hello again' ]
+[ 'Hello again', messageOut: 'Hello again' ]
 
 get_message transaction
-[ 'Hello again' ]
+[ 'Hello again', messageOut: 'Hello again' ]
 
 Getting event(s) from record
 Calling set_message to trigger new event
 
 get_message Query
-[ '1/27/2022, 1:05:01 PM' ]
-Record event: from '0.0.11093' update to '1/27/2022, 1:05:01 PM'
+[ '2/4/2022, 4:07:29 PM', messageOut: '2/4/2022, 4:07:29 PM' ]
+Record event: from '0.0.11093' update to '2/4/2022, 4:07:29 PM'
 
 Getting event(s) from mirror
 Waiting 10s to allow transaction propagation to mirror
 Mirror event(s): from '0.0.11093' update to 'Hello Hedera'
 Mirror event(s): from '0.0.11093' update to 'Hello again'
-Mirror event(s): from '0.0.11093' update to '1/27/2022, 1:05:01 PM'
+Mirror event(s): from '0.0.11093' update to '2/4/2022, 4:07:29 PM'
 ```
