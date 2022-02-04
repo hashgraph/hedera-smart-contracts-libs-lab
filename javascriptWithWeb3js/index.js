@@ -147,7 +147,7 @@ async function queryGetMessage(contractId) {
         .execute(client);
 
     let results = decodeFunctionResult('get_message', contractCall.bytes);
-    console.log(results[0]);
+    console.log(results);
 }
 
 /**
@@ -175,7 +175,7 @@ async function callGetMessage(contractId) {
     // the result of the function call is in record.contractFunctionResult.bytes
     // let`s parse it using web3.js
     const results = decodeFunctionResult('get_message', record.contractFunctionResult.bytes);
-    console.log(results[0]);
+    console.log(results);
 }
 
 /**
