@@ -23,7 +23,7 @@ repositories {
 //}
 
 dependencies {
-    implementation "com.hedera.hashgraph:sdk:2.4.0"
+    implementation "com.hedera.hashgraph:sdk:2.7.0"
     implementation "com.google.code.gson:gson:2.8.9"
     implementation "io.grpc:grpc-netty-shaded:1.43.2"
     implementation "io.github.cdimascio:java-dotenv:5.2.2"
