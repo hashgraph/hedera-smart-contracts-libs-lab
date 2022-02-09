@@ -1,4 +1,4 @@
-const {
+import {
     Client,
     ContractCreateTransaction,
     ContractExecuteTransaction,
@@ -6,10 +6,12 @@ const {
     AccountId,
     Hbar,
     PrivateKey, ContractCallQuery,
-} = require("@hashgraph/sdk");
+} from"@hashgraph/sdk";
 
-const { Interface } = require("@ethersproject/abi");
-require("dotenv").config({path : '../.env'});
+import { Interface } from "@ethersproject/abi";
+
+import * as dotenv from "dotenv";
+dotenv.config({path : '../.env'});
 
 let abi;
 let client;
@@ -180,18 +182,17 @@ function encodeFunctionParameters(functionName, parameterArray) {
     return Buffer.from(functionCallAsHexString, `hex`);
 }
 
-module.exports = {
-    deploy: deploy,
-    call: call,
-    query: query,
-    setMaxTransactionFee: setMaxTransactionFee,
-    setMaxQueryPayment: setMaxQueryPayment,
-    setDefaultGas: setDefaultGas,
-    setAbi: setAbi,
-    setContractId: setContractId,
-    setClient: setClient,
-    getClient: getClient,
-    getOperatorId: getOperatorId,
-    getOperatorKey: getOperatorKey
+export {
+    deploy,
+    call,
+    query,
+    setMaxTransactionFee,
+    setMaxQueryPayment,
+    setDefaultGas,
+    setAbi,
+    setContractId,
+    setClient,
+    getClient,
+    getOperatorId,
+    getOperatorKey
 }
-

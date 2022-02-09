@@ -15,10 +15,12 @@ yarn install
 The example runs through the following steps to test the contract
 * Deploys the `Token.sol` contract
 * Creates an account
-* Calls the `balanceOf` contract function and tests the output 
-* Calls the `totalSupply` contract function and tests the output
-* Queries the `balanceOf` contract function and tests the output
-* Queries the `totalSupply` contract function and tests the output
+* Calls the `balanceOf` contract function 
+* Calls the `totalSupply` contract function
+* Checks balance and supply match
+* Queries the `balanceOf` contract function
+* Queries the `totalSupply` contract function
+* Checks balance and supply match
 * Calls the `transfer` contract function, sending 100 to tne account created at the beginning
 * Queries the `balanceOf` contract function for the account and tests the output
 * Calls the `transfer` contract function with an amount higher than total supply, checks the contract reverts
@@ -81,7 +83,7 @@ An example test suite in `test/Token.js` executes the tests themselves, for exam
 We import the artifact created by HardHat
 
 ```javascript
-const tokenJson = require("../artifacts/contracts/Token.sol/Token.json");
+const tokenJson = JSON.parse(await readFile(new URL('../artifacts/contracts/Token.sol/Token.json', import.meta.url)));
 ```
 
 Setup the test by deploying the contract 
@@ -128,7 +130,7 @@ then start the unit tests themselves
         // total supply has no parameters
         let totalSupply = await call("totalSupply", []);
 
-        expect(totalSupply.toString()).to.equal(ownerBalance[0].toString()); // comparing big numbers
+        expect(totalSupply[0].toString()).to.equal(ownerBalance[0].toString()); // comparing big numbers
     });
 ```
 
