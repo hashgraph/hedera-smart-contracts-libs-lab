@@ -1,7 +1,10 @@
-const { expect } = require("chai");
-const { assert } = require("chai");
+import {readFile} from "fs/promises";
 
-const { deploy,
+import { expect, assert } from "chai";
+
+import {AccountId, ContractId, AccountCreateTransaction, Hbar, PrivateKey} from "@hashgraph/sdk";
+
+import { deploy,
     call,
     query,
     setMaxTransactionFee,
@@ -12,11 +15,10 @@ const { deploy,
     setContractId,
     getClient,
     getOperatorId,
-    getOperatorKey} = require("./HederaTestSupport");
-const {AccountId, ContractId, AccountCreateTransaction, Hbar, PrivateKey} = require("@hashgraph/sdk");
+    getOperatorKey} from "./HederaTestSupport.js";
 
 // specific to this test
-const tokenJson = require("../artifacts/contracts/Token.sol/Token.json");
+const tokenJson = JSON.parse(await readFile(new URL('../artifacts/contracts/Token.sol/Token.json', import.meta.url)));
 let toAccountAddress;
 
 describe("Token contract", function () {
@@ -61,7 +63,7 @@ describe("Token contract", function () {
         // total supply has no parameters
         let totalSupply = await call("totalSupply", []);
 
-        expect(totalSupply.toString()).to.equal(ownerBalance[0].toString()); // comparing big numbers
+        expect(totalSupply[0].toString()).to.equal(ownerBalance[0].toString()); // comparing big numbers
     });
 
     it("Query - Deployment should assign the total supply of tokens to the owner", async function () {
@@ -71,7 +73,7 @@ describe("Token contract", function () {
         // query contract functions (only for non-state modifying functions)
         let ownerBalance = await query("balanceOf", parameters);
         let totalSupply = await query("totalSupply", []);
-        expect(totalSupply.toString()).to.equal(ownerBalance[0].toString()); // comparing big numbers
+        expect(totalSupply[0].toString()).to.equal(ownerBalance[0].toString()); // comparing big numbers
     });
 
     it("Transfer to account", async function () {
