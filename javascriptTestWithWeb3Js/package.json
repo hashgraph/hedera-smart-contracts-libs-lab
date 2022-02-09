@@ -7,7 +7,7 @@
     "test": "mocha"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@hashgraph/sdk": "^2.8.0",
     "dotenv": "^10.0.0",
