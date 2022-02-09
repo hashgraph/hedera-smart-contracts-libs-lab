@@ -1,0 +1,19 @@
+{
+  "name": "javascripttestwithweb3js",
+  "version": "1.0.0",
+  "description": "Example use of the Hedera JavaScript SDK along with Web3.js, hardhat, mocha and chai for unit testing",
+  "type": "module",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@hashgraph/sdk": "^2.8.0",
+    "dotenv": "^10.0.0",
+    "chai": "^4.3.6",
+    "web3": "1.7.0",
+    "hardhat": "^2.8.3",
+    "mocha": "^9.2.0"
+  }
+}
