@@ -2,6 +2,7 @@
   "name": "javascriptWithEthersJs",
   "version": "1.0.0",
   "type": "module",
+  "license": "Apache-2.0",
   "description": "Example use of the Hedera JavaScript SDK along with the Ethers.js library",
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",

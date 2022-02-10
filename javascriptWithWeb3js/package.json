@@ -1,6 +1,7 @@
 {
   "name": "javascriptWithWeb3Js",
   "version": "1.0.0",
+  "license": "Apache-2.0",
   "type": "module",
   "description": "Example use of the Hedera JavaScript SDK along with the Web3.js library",
   "dependencies": {

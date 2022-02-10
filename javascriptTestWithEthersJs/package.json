@@ -1,0 +1,19 @@
+{
+  "name": "javascripttestwithethersjs",
+  "version": "1.0.0",
+  "description": "Example use of the Hedera JavaScript SDK along with Ethers.js, hardhat, mocha and chai for unit testing",
+  "type": "module",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@hashgraph/sdk": "^2.8.0",
+    "dotenv": "^10.0.0",
+    "chai": "^4.3.6",
+    "ethers": "^5.5.4",
+    "hardhat": "^2.8.3",
+    "mocha": "^9.2.0"
+  }
+}

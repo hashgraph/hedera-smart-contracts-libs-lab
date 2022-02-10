@@ -25,29 +25,37 @@ will output
 
 ```shell
 Deploying the contract
-new contract ID: 0.0.29562231
+new contract ID: 0.0.29622155
 
 get_message Query
-Hello Hedera
+Result {
+  '0': 'Hello Hedera',
+  __length__: 1,
+  messageOut: 'Hello Hedera'
+}
 
 Calling set_message with 'Hello again' parameter value
 
 get_message Query
-Hello again
+Result { '0': 'Hello again', __length__: 1, messageOut: 'Hello again' }
 
 get_message transaction
-Hello again
+Result { '0': 'Hello again', __length__: 1, messageOut: 'Hello again' }
 
 Getting event(s) from record
 Calling set_message to trigger new event
 
 get_message Query
-1/27/2022, 4:09:47 PM
-Record event: from '0.0.11093' update to '1/27/2022, 4:09:47 PM'
+Result {
+  '0': '2/4/2022, 4:05:49 PM',
+  __length__: 1,
+  messageOut: '2/4/2022, 4:05:49 PM'
+}
+Record event: from '0.0.11093' update to '2/4/2022, 4:05:49 PM'
 
 Getting event(s) from mirror
 Waiting 10s to allow transaction propagation to mirror
 Mirror event(s): from '0.0.11093' update to 'Hello Hedera'
 Mirror event(s): from '0.0.11093' update to 'Hello again'
-Mirror event(s): from '0.0.11093' update to '1/27/2022, 4:09:47 PM'
+Mirror event(s): from '0.0.11093' update to '2/4/2022, 4:05:49 PM'
 ```

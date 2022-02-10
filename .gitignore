@@ -26,3 +26,6 @@ hs_err_pid*
 node_modules
 .gradle
 build
+artifacts
+cache
+hardhat.config.js
