@@ -31,8 +31,8 @@ dependencies {
 //    implementation "org.web3j:core:5.0.0"
 //    implementation "org.web3j:codegen:5.0.0"
 
-    implementation "org.web3j:core:4.8.9-SNAPSHOT"
     implementation "org.web3j:codegen:4.8.9-SNAPSHOT"
+    implementation "org.web3j:hedera:4.8.9-SNAPSHOT"
 
     implementation 'org.slf4j:slf4j-nop:2.0.0-alpha1'
 

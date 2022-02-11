@@ -1,16 +1,9 @@
 package com.hedera.examples;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.protobuf.ByteString;
-import com.hedera.examples.Stateful.Get_messageFunctionResponse;
-import com.hedera.examples.Stateful.SetMessageEventResponse;
 import com.hedera.hashgraph.sdk.AccountId;
 import com.hedera.hashgraph.sdk.Client;
 import com.hedera.hashgraph.sdk.ContractCallQuery;
 import com.hedera.hashgraph.sdk.ContractCreateTransaction;
-import com.hedera.hashgraph.sdk.ContractExecuteTransaction;
-import com.hedera.hashgraph.sdk.ContractFunctionResult;
 import com.hedera.hashgraph.sdk.ContractId;
 import com.hedera.hashgraph.sdk.FileCreateTransaction;
 import com.hedera.hashgraph.sdk.FileId;
@@ -19,19 +12,12 @@ import com.hedera.hashgraph.sdk.PrecheckStatusException;
 import com.hedera.hashgraph.sdk.PrivateKey;
 import com.hedera.hashgraph.sdk.ReceiptStatusException;
 import com.hedera.hashgraph.sdk.TransactionReceipt;
-import com.hedera.hashgraph.sdk.TransactionRecord;
 import com.hedera.hashgraph.sdk.TransactionResponse;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.bouncycastle.util.encoders.Hex;
+import org.web3j.protocol.hedera.utils.Utils;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
 
 public final class Example2 {
@@ -40,14 +26,14 @@ public final class Example2 {
     private static final AccountId OPERATOR_ID = AccountId.fromString(Objects.requireNonNull(dotenv.get("OPERATOR_ID")));
     private static final PrivateKey OPERATOR_KEY = PrivateKey.fromString(Objects.requireNonNull(dotenv.get("OPERATOR_KEY")));
     private static final Client client = Client.forTestnet();
-    private static final Gson gson = new Gson();
     // Instantiate an object using web3j generated code
-    private static final Stateful statefulContract = new Stateful();
+    private static Stateful statefulContract;
 
     private Example2() {
     }
 
-    public static void main(String[] args) throws PrecheckStatusException, TimeoutException, ReceiptStatusException, IOException, InterruptedException {
+    public static void main(String[] args) throws PrecheckStatusException, TimeoutException, ReceiptStatusException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        statefulContract = (Stateful) Utils.contract(Stateful.class);
 
         client.setOperator(OPERATOR_ID, OPERATOR_KEY);
 
@@ -63,7 +49,7 @@ public final class Example2 {
     private static ContractId deployContract() throws PrecheckStatusException, TimeoutException, ReceiptStatusException {
         System.out.println("Deploying contract");
         // Import the compiled contract
-        byte[] byteCode = statefulContract.getContractBinary().getBytes(StandardCharsets.UTF_8);
+        byte[] byteCode = Utils.contractByteCode(statefulContract);
 
         // create the contract's bytecode file
         TransactionResponse fileTransactionResponse = new FileCreateTransaction()
@@ -78,12 +64,12 @@ public final class Example2 {
         System.out.println("contract bytecode file: " + newFileId);
 
         // generate a constructor input using web3j generated class
-        byte[] encodedConstructorBytes = Hex.decode(statefulContract.getABI_Constructor("Hello Hedera"));
+        byte[] constructor = Utils.functionBytes(statefulContract.getABI_Constructor("Hello Hedera"));
 
         TransactionResponse contractTransactionResponse = new ContractCreateTransaction()
             .setBytecodeFileId(newFileId)
             .setGas(100_000)
-            .setConstructorParameters(encodedConstructorBytes)
+            .setConstructorParameters(constructor)
             .execute(client);
 
         TransactionReceipt contractReceipt = contractTransactionResponse.getReceipt(client);
@@ -103,13 +89,12 @@ public final class Example2 {
         System.out.println("\nget_message Query");
 
         // get the function call
-        String encodedFunction = statefulContract.getABI_get_message();
-        byte[] encodedFunctionBytes = Hex.decode(encodedFunction.replace("0x", ""));
+        byte[] functionBytes = Utils.functionBytes(statefulContract.getABI_get_message());
 
         // query the contract
         Hbar response = new ContractCallQuery()
             .setContractId(contractId)
-            .setFunctionParameters(encodedFunctionBytes)
+            .setFunctionParameters(functionBytes)
             .setQueryPayment(new Hbar(2))
             .setGas(100000)
             .getCost(client);
@@ -118,16 +103,14 @@ public final class Example2 {
         System.out.println(response.toString());
     }
 
-
     private static void querySetMessage(ContractId contractId, String newMessage) throws PrecheckStatusException, TimeoutException, ReceiptStatusException {
 
         // generate function call with function name and parameters
-        String encodedFunction = statefulContract.getABI_set_message(newMessage);
-        byte[] encodedFunctionBytes = Hex.decode(encodedFunction.replace("0x", ""));
+        byte[] functionBytes = Utils.functionBytes(statefulContract.getABI_set_message(newMessage));
 
         Hbar response = new ContractCallQuery()
                 .setContractId(contractId)
-                .setFunctionParameters(encodedFunctionBytes)
+                .setFunctionParameters(functionBytes)
                 .setGas(100000)
                 .getCost(client);
 
