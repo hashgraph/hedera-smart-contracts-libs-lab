@@ -3,7 +3,7 @@ package com.hedera.examples;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.protobuf.ByteString;
-import com.hedera.examples.Stateful.Get_messageFunctionResponse;
+import com.hedera.examples.Stateful.FunctionResponse_get_message;
 import com.hedera.examples.Stateful.SetMessageEventResponse;
 import com.hedera.hashgraph.sdk.AccountId;
 import com.hedera.hashgraph.sdk.Client;
@@ -23,11 +23,12 @@ import com.hedera.hashgraph.sdk.TransactionRecord;
 import com.hedera.hashgraph.sdk.TransactionResponse;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bouncycastle.util.encoders.Hex;
+import org.web3j.protocol.hedera.utils.Utils;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -42,12 +43,13 @@ public final class Example {
     private static final Client client = Client.forTestnet();
     private static final Gson gson = new Gson();
     // Instantiate an object using web3j generated code
-    private static final Stateful statefulContract = new Stateful();
+    private static Stateful statefulContract;
 
     private Example() {
     }
 
-    public static void main(String[] args) throws PrecheckStatusException, TimeoutException, ReceiptStatusException, IOException, InterruptedException {
+    public static void main(String[] args) throws PrecheckStatusException, TimeoutException, ReceiptStatusException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, InterruptedException {
+        statefulContract = (Stateful) Utils.contract(Stateful.class);
 
         client.setOperator(OPERATOR_ID, OPERATOR_KEY);
 
@@ -73,7 +75,7 @@ public final class Example {
     private static ContractId deployContract() throws PrecheckStatusException, TimeoutException, ReceiptStatusException {
         System.out.println("Deploying contract");
         // Import the compiled contract
-        byte[] byteCode = statefulContract.getContractBinary().getBytes(StandardCharsets.UTF_8);
+        byte[] byteCode = Utils.contractByteCode(statefulContract);
 
         // create the contract's bytecode file
         TransactionResponse fileTransactionResponse = new FileCreateTransaction()
@@ -88,7 +90,7 @@ public final class Example {
         System.out.println("contract bytecode file: " + newFileId);
 
         // generate a constructor input using web3j generated class
-        byte[] encodedConstructorBytes = Hex.decode(statefulContract.getABI_Constructor("Hello Hedera"));
+        byte[] encodedConstructorBytes = Utils.functionBytes(statefulContract.getABI_Constructor("Hello Hedera"));
 
         TransactionResponse contractTransactionResponse = new ContractCreateTransaction()
             .setBytecodeFileId(newFileId)
@@ -113,8 +115,7 @@ public final class Example {
         System.out.println("\nget_message Query");
 
         // get the function call
-        String encodedFunction = statefulContract.getABI_get_message();
-        byte[] encodedFunctionBytes = Hex.decode(encodedFunction.replace("0x", ""));
+        byte[] encodedFunctionBytes = Utils.functionBytes(statefulContract.getABI_get_message());
 
         // query the contract
         ContractFunctionResult response = new ContractCallQuery()
@@ -128,7 +129,7 @@ public final class Example {
         String responseHex = Hex.toHexString(response.asBytes());
 
         // decode the response to a List of Type
-        Get_messageFunctionResponse decodedResponse = statefulContract.decodeABI_get_message(responseHex);
+        FunctionResponse_get_message decodedResponse = statefulContract.decodeABI_get_message(responseHex);
         System.out.println(decodedResponse.messageOut);
     }
 
@@ -143,12 +144,11 @@ public final class Example {
         System.out.println("\nget_message transaction");
 
         // get the function call
-        String encodedFunction = statefulContract.getABI_get_message();
-        byte[] encodedFunctionBytes = Hex.decode(encodedFunction.replace("0x", ""));
+        ByteString encodedFunction = Utils.functionByteString(statefulContract.getABI_get_message());
 
         TransactionResponse response = new ContractExecuteTransaction()
                 .setContractId(contractId)
-                .setFunctionParameters(ByteString.copyFrom(encodedFunctionBytes))
+                .setFunctionParameters(encodedFunction)
                 .setGas(100000)
                 .execute(client);
 
@@ -159,7 +159,7 @@ public final class Example {
         String responseHex = Hex.toHexString(record.contractFunctionResult.asBytes());
 
         // decode the response to a List of Type
-        Get_messageFunctionResponse decodedResponse = statefulContract.decodeABI_get_message(responseHex);
+        FunctionResponse_get_message decodedResponse = statefulContract.decodeABI_get_message(responseHex);
         System.out.println(decodedResponse.messageOut);
     }
 
@@ -172,12 +172,11 @@ public final class Example {
         System.out.println("\nCalling set_message with '" + newMessage + " parameter value");
 
         // generate function call with function name and parameters
-        String encodedFunction = statefulContract.getABI_set_message(newMessage);
-        byte[] encodedFunctionBytes = Hex.decode(encodedFunction.replace("0x", ""));
+        ByteString encodedFunction = Utils.functionByteString(statefulContract.getABI_set_message(newMessage));
 
         TransactionResponse response = new ContractExecuteTransaction()
                 .setContractId(contractId)
-                .setFunctionParameters(ByteString.copyFrom(encodedFunctionBytes))
+                .setFunctionParameters(encodedFunction)
                 .setGas(100000)
                 .execute(client);
 
@@ -196,13 +195,13 @@ public final class Example {
         // calling "set_message" with the current date/time to generate a new event
         String newMessage = new Date().toString();
         // generate function call with function name and parameters
-        byte[] encodedFunctionBytes = Hex.decode(statefulContract.getABI_set_message(newMessage).replace("0x", ""));
+        ByteString encodedFunction = Utils.functionByteString(statefulContract.getABI_set_message(newMessage));
 
         System.out.println("Calling set_message to trigger new event");
         // execute the transaction calling the set_message contract function
         TransactionResponse response = new ContractExecuteTransaction()
                 .setContractId(contractId)
-                .setFunctionParameters(ByteString.copyFrom(encodedFunctionBytes))
+                .setFunctionParameters(encodedFunction)
                 .setGas(100000)
                 .execute(client);
 
@@ -216,7 +215,7 @@ public final class Example {
         System.out.println("\nEvents' data");
 
         // convert the transaction record to a web3jTransactionReceipt
-        org.web3j.protocol.core.methods.response.TransactionReceipt web3jTransactionReceipt = Utils.web3jTransactionReceiptFromRecord(transactionRecord);
+        org.web3j.protocol.core.methods.response.TransactionReceipt web3jTransactionReceipt = HederaUtils.web3jTransactionReceiptFromRecord(transactionRecord);
         List<SetMessageEventResponse> setMessageEventResponses = statefulContract.getSetMessageEvents(web3jTransactionReceipt);
         for (SetMessageEventResponse setMessageEventResponse : setMessageEventResponses) {
             System.out.println("From (AccountId): " + setMessageEventResponse.from + " (" + AccountId.fromSolidityAddress(setMessageEventResponse.from).toString() + ")");
@@ -262,7 +261,7 @@ public final class Example {
             JsonObject mirrorResponse = gson.fromJson(data.toString(), JsonObject.class);
 
             // convert the mirror logs to a web3jTransactionReceipt
-            org.web3j.protocol.core.methods.response.TransactionReceipt web3jTransactionReceipt = Utils.web3TransactionReceiptFromMirrorLogs(mirrorResponse);
+            org.web3j.protocol.core.methods.response.TransactionReceipt web3jTransactionReceipt = HederaUtils.web3TransactionReceiptFromMirrorLogs(mirrorResponse);
             List<SetMessageEventResponse> setMessageEventResponses = statefulContract.getSetMessageEvents(web3jTransactionReceipt);
             for (SetMessageEventResponse setMessageEventResponse : setMessageEventResponses) {
                 System.out.println("From (AccountId): " + setMessageEventResponse.from + " (" + AccountId.fromSolidityAddress(setMessageEventResponse.from).toString() + ")");

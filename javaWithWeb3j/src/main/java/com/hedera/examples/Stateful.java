@@ -49,10 +49,6 @@ public class Stateful extends Contract {
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Utf8String>() {}));
     ;
 
-    protected Stateful() {
-        super(BINARY);
-    }
-
     @Deprecated
     protected Stateful(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
         super(BINARY, contractAddress, web3j, credentials, gasPrice, gasLimit);
@@ -104,7 +100,7 @@ public class Stateful extends Contract {
         return setMessageEventFlowable(filter);
     }
 
-    public RemoteFunctionCall<String> get_message(String messageOut) {
+    public RemoteFunctionCall<String> get_message() {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GET_MESSAGE, 
                 Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
@@ -119,14 +115,14 @@ public class Stateful extends Contract {
         return org.web3j.abi.FunctionEncoder.encode(function);
     }
 
-    public Get_messageFunctionResponse decodeABI_get_message(String abiToDecode) {
+    public FunctionResponse_get_message decodeABI_get_message(String abiToDecode) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GET_MESSAGE, 
-                Arrays.asList(), 
+                Collections.<Type>emptyList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
         List<Type> response = FunctionReturnDecoder.decode(abiToDecode, function.getOutputParameters());
-        Get_messageFunctionResponse get_messageFunctionResponse = new Get_messageFunctionResponse();
-        get_messageFunctionResponse.messageOut = (String) response.get(0).getValue();
-        return get_messageFunctionResponse;
+        FunctionResponse_get_message functionResponse_get_message = new FunctionResponse_get_message();
+        functionResponse_get_message.messageOut = (String) response.get(0).getValue();
+        return functionResponse_get_message;
     }
 
     public RemoteFunctionCall<TransactionReceipt> set_message(String message_) {
@@ -196,7 +192,7 @@ public class Stateful extends Contract {
         public String message;
     }
 
-    public static class Get_messageFunctionResponse {
+    public static class FunctionResponse_get_message {
         public String messageOut;
     }
 }

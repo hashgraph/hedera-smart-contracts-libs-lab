@@ -11,6 +11,6 @@ public class GenerateWrappers {
     String contractName = "Stateful";
     String basePackageName = "com.hedera.examples";
 
-    Utils.wrap(abiFileLocation, byteCodeFileLocation, destinationDir, contractName, basePackageName, true);
+    HederaUtils.wrap(abiFileLocation, byteCodeFileLocation, destinationDir, contractName, basePackageName, true);
   }
 }

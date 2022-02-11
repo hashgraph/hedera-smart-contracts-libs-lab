@@ -38,7 +38,7 @@ public class GenerateTestWrappers {
         System.out.println("Skipping " + contractName);
       } else {
         System.out.println("Processing " + contractName);
-        Utils.wrap(abiFileLocation, byteCodeFileLocation, destinationDir, contractName, basePackageName, true);
+        HederaUtils.wrap(abiFileLocation, byteCodeFileLocation, destinationDir, contractName, basePackageName, true);
       }
     }
   }

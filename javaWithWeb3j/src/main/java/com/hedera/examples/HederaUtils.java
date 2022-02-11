@@ -21,7 +21,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utils {
+public class HederaUtils {
   public static TransactionReceipt web3jTransactionReceiptFromRecord(TransactionRecord transactionRecord) {
     TransactionReceipt transactionReceipt = new TransactionReceipt();
     List<Log> logs = new ArrayList<>();
@@ -70,10 +70,10 @@ public class Utils {
       boolean useJavaNativeTypes = javaNative;
       boolean useJavaPrimitiveTypes = javaNative;
       int addressLength = 20;
-      boolean abiFuncs = false;
+      boolean abiFuncs = true;
 
       InputStream inputstream = new FileInputStream(byteCodeFileLocation);
-      String byteCodeHex = Utils.readFromInputStream(inputstream);
+      String byteCodeHex = HederaUtils.readFromInputStream(inputstream);
       inputstream.close();
 
       // try to get from Json if it is indeed Json
