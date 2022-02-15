@@ -78,7 +78,7 @@ describe("Token contract", function () {
     it("Transactions - Deployment should assign the total supply of tokens to the owner", async function () {
         // call contract functions (usually only for state modifying functions)
         // set function input parameters
-        let parameters = [AccountId.fromString("0.0.11093").toSolidityAddress()];
+        let parameters = [AccountId.fromString(getOperatorId()).toSolidityAddress()];
         let ownerBalance = await call("balanceOf", parameters);
         // total supply has no parameters
         let totalSupply = await call("totalSupply", []);
@@ -89,7 +89,7 @@ describe("Token contract", function () {
     it("Query - Deployment should assign the total supply of tokens to the owner", async function () {
         // call contract functions (usually only for state modifying functions)
         // set function input parameters
-        let parameters = [AccountId.fromString("0.0.11093").toSolidityAddress()];
+        let parameters = [AccountId.fromString(getOperatorId()).toSolidityAddress()];
         // query contract functions (only for non-state modifying functions)
         let ownerBalance = await query("balanceOf", parameters);
         let totalSupply = await query("totalSupply", []);
