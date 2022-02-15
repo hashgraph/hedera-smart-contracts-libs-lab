@@ -125,7 +125,7 @@ then start the unit tests themselves
     it("Transactions - Deployment should assign the total supply of tokens to the owner", async function () {
         // call contract functions (usually only for state modifying functions)
         // set function input parameters
-        let parameters = [AccountId.fromString("0.0.11093").toSolidityAddress()];
+        let parameters = [AccountId.fromString(getOperatorKey()).toSolidityAddress()];
         let ownerBalance = await call("balanceOf", parameters);
         // total supply has no parameters
         let totalSupply = await call("totalSupply", []);
