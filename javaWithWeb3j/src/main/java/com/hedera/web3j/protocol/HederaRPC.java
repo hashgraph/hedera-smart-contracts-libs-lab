@@ -18,19 +18,16 @@
  *
  */
 
-package com.hedera.examples;
+package com.hedera.web3j.protocol;
 
-import java.io.IOException;
+import org.web3j.protocol.Web3jService;
+import org.web3j.protocol.eea.JsonRpc2_0Eea;
+import org.web3j.protocol.hedera.HederaService;
 
-public class GenerateWrappers {
-  public static void main(String[] args) throws IOException, ClassNotFoundException {
+public class HederaRPC extends JsonRpc2_0Eea {
+    private static Web3jService web3jService = new HederaService();
 
-    String abiFileLocation = "./Solidity/abi.json";
-    String byteCodeFileLocation = "./Solidity/bytecode.json";
-    String destinationDir = "./src/main/java";
-    String contractName = "Stateful";
-    String basePackageName = "com.hedera.examples";
-
-    HederaUtils.wrap(abiFileLocation, byteCodeFileLocation, destinationDir, contractName, basePackageName, true);
-  }
+    public HederaRPC() {
+        super(web3jService);
+    }
 }
