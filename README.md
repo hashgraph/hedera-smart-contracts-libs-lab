@@ -5,6 +5,7 @@ Smart contract examples in various languages showing use of Hedera SDKs in tande
 * generate function calls using the contract's ABI
 * interpret contract responses using the contract's ABI
 * interpret event information using the contract's ABI
+* process errors reported by smart contracts in the event of a REVERT
 
 ## Prerequisites
 
@@ -37,6 +38,7 @@ For convenience, the contract was compiled using `Remix` and the output from the
 * Java SDK with [web3.j](https://docs.web3j.io/4.8.7/)
 * Unit testing using Chai+Mocha and Ethers.js
 * Unit testing using Chai+Mocha and Web3.js
+* Javascript Decode revert errors
 * Others TBD (Golang)
 
 ## Contributing
