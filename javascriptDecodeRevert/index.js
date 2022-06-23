@@ -40,6 +40,8 @@ function errorSignature(error_message) {
 }
 
 async function processByTransactionId(transactionId) {
+    console.log(`querying for transaction id ${transactionId}`);
+
     let nonce = 0;
     while (nonce >= 0) {
         const transactionResult = await getContractResultsByTransactionId(transactionId, nonce);
