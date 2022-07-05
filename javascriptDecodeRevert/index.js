@@ -22,6 +22,7 @@ import {
     AccountId, ContractId, TransactionId
 } from "@hashgraph/sdk";
 
+import readline from "readline";
 import * as abiDecoder from "abi-decoder";
 import axios from "axios";
 
@@ -222,43 +223,55 @@ async function main() {
     console.log("");
     // get the command line parameters
     const args = process.argv.slice(2);
-    if (args.length == 2) {
+    if (args.length == 1) {
         mirrorUrl = args[0];
-        const userInput = args[1];
-        let contractId;
-        let transactionId;
 
-        try {
-            transactionId = TransactionId.fromString(userInput).toString();
-        } catch (e) {
-            // input was not a transaction, continue
-        }
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
 
-        try {
-            const testContractId = ContractId.fromString(userInput).toString();
-            if (testContractId.length === userInput.length) {
-                // a transactionId will parse to a contractId !
-                contractId = testContractId;
+        let userInput;
+
+        rl.question("ContractId or TransactionId ? ", async function (answer) {
+            userInput = answer;
+            // const userInput = args[1];
+            let contractId;
+            let transactionId;
+
+            try {
+                transactionId = TransactionId.fromString(userInput).toString();
+            } catch (e) {
+                // input was not a transaction, continue
             }
-        } catch (e) {
-            // input was not a contract, continue
-        }
 
-        if (transactionId) {
-            // convert transaction id format to one understood by the API
-            transactionId = transactionId.replaceAll(".","-");
-            transactionId = transactionId.replace("0-0-", "0.0.");
-            transactionId = transactionId.replace("@","-");
+            try {
+                const testContractId = ContractId.fromString(userInput).toString();
+                if (testContractId.length === userInput.length) {
+                    // a transactionId will parse to a contractId !
+                    contractId = testContractId;
+                }
+            } catch (e) {
+                // input was not a contract, continue
+            }
 
-            await processByTransactionId(transactionId);
+            if (transactionId) {
+                // convert transaction id format to one understood by the API
+                transactionId = transactionId.replaceAll(".", "-");
+                transactionId = transactionId.replace("0-0-", "0.0.");
+                transactionId = transactionId.replace("@", "-");
 
-        } else if (contractId) {
-            // get the signature and data for the error
-            const error = await getErrorFromMirror(contractId.toString(),"", false);
-            await processError(error, false, 0);
-        } else {
-            console.error(`${userInput} didn't resolve to a valid contractId (0.0.xxxxx) or transactionId (0.0.xxxx@yyyyy.zzzzz)`);
-        }
+                await processByTransactionId(transactionId);
+
+            } else if (contractId) {
+                // get the signature and data for the error
+                const error = await getErrorFromMirror(contractId.toString(), "", false);
+                await processError(error, false, 0);
+            } else {
+                console.error(`${userInput} didn't resolve to a valid contractId (0.0.xxxxx) or transactionId (0.0.xxxx@yyyyy.zzzzz)`);
+            }
+            rl.close();
+        });
     } else {
         console.error("invalid command line arguments supplied, please consult README.md");
     }

@@ -23,19 +23,16 @@ The script queries a mirror node for the last result of a given `contract id` at
 
 ## Run the example
 
-the script takes two command line parameters
+the script takes one command line parameter and then prompts for either a contractId or transactionId
 
 * the network being used (mainnet-public, testnet or previewnet)
-* the ID of the contract (e.g. 0.0.234234)
-or
-* the ID of a transaction (e.g. 0.0.28526596@1652950405.995377309)
+
+When prompted, input either a contractId (e.g. 0.0.234234) or a transactionId (e.g. 0.0.28526596@1652950405.995377309)
 
 ```shell
 yarn install
 
-node index.js testnet 0.0.34843606
-# or
-node index.js testnet 0.0.28526596@1652950405.995377309
+node index.js testnet
 ```
 
 will output (note this example has nested contract calls) the following for a `contractId`
