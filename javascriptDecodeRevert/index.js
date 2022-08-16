@@ -240,6 +240,11 @@ async function main() {
             let transactionId;
 
             try {
+                if (userInput.includes("-")) {
+                    // replace "-" with "@" and "."
+                    userInput = userInput.replace("-", "@");
+                    userInput = userInput.replace("-", ".");
+                }
                 transactionId = TransactionId.fromString(userInput).toString();
             } catch (e) {
                 // input was not a transaction, continue
