@@ -23,7 +23,13 @@ import {
     PrivateKey,
     ContractCreateTransaction,
     FileCreateTransaction,
-    AccountId, Hbar, ContractExecuteTransaction, ContractCallQuery, ContractFunctionParameters,
+    AccountId,
+    Hbar,
+    ContractExecuteTransaction,
+    ContractCallQuery,
+    ContractFunctionParameters,
+    FileUpdateTransaction,
+    FileAppendTransaction,
 } from "@hashgraph/sdk";
 
 import * as dotenv from "dotenv";
@@ -37,7 +43,7 @@ dotenv.config({path : '../.env'});
 
 let abi;
 let abiInterface;
-let client = Client.forTestnet();
+let client;
 const constructMessage = 'Hello Hedera';
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -48,9 +54,11 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 async function main() {
 
     // Import the ABI
-    abi = JSON.parse(fs.readFileSync('../contracts/abi.json', 'utf8'));
+    const contract = JSON.parse(fs.readFileSync('./artifacts/contracts/stateful.sol/StatefulContract.json', 'utf8'));
+    abi = contract.abi;
     abiInterface = new Interface(abi);
 
+    client = Client.forName(process.env.NETWORK);
     client.setOperator(
         AccountId.fromString(process.env.OPERATOR_ID),
         PrivateKey.fromString(process.env.OPERATOR_KEY)
@@ -60,9 +68,9 @@ async function main() {
     client.setMaxQueryPayment(new Hbar(5))
 
     // deploy the contract to Hedera from bytecode
-    const contractId = await deployContract();
+    const contractId = await deployContract(contract);
 
-    const eth = new Eth("https://testnet.hashio.io/api");
+    const eth = new Eth(`https://${process.env.NETWORK}.hashio.io/api`);
     const privateKey = PrivateKey.generateECDSA();
 
     const hexPrivateKey = "0x"+privateKey.toStringRaw();
@@ -107,20 +115,15 @@ async function main() {
  * Deploys the contract to Hedera by first creating a file containing the bytecode, then creating a contract from the resulting
  * FileId, specifying a parameter value for the constructor and returning the resulting ContractId
  */
-async function deployContract() {
+async function deployContract(contract) {
     console.log(`\nDeploying the contract`);
-
-    // Import the compiled contract
-    const bytecode = JSON.parse(fs.readFileSync('../contracts/bytecode.json', 'utf8'));
-    // The contract bytecode is located on the `object` field
-    const contractByteCode = /** @type {string} */ (bytecode.object);
 
     // Create a file on Hedera which contains the contact bytecode.
     // Note: The contract bytecode **must** be hex encoded, it should not
     // be the actual data the hex represents
     const fileTransactionResponse = await new FileCreateTransaction()
         .setKeys([client.operatorPublicKey])
-        .setContents(contractByteCode)
+        .setContents("")
         .execute(client);
 
     // Fetch the receipt for transaction that created the file
@@ -128,6 +131,13 @@ async function deployContract() {
 
     // The file ID is located on the transaction receipt
     const fileId = fileReceipt.fileId;
+
+    const fileUpdateTransaction = await new FileAppendTransaction()
+        .setFileId(fileId)
+        .setContents(contract.bytecode)
+        .execute(client);
+
+    await fileUpdateTransaction.getReceipt(client);
 
     // Create the contract
     const contractTransactionResponse = await new ContractCreateTransaction()

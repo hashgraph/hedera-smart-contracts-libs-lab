@@ -11,9 +11,11 @@ The example runs through the following steps
 * Compares the result with the ethereum address extracted from the ECDSA private key
 
 ```shell
-yarn install
+npm install
+npx hardhat compile
 
-node index.js
+node ecRecoverTest.js
+node alternativeRecoverTest.js
 ```
 
 will output
