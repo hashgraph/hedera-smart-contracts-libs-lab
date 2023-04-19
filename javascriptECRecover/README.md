@@ -10,6 +10,8 @@ The example runs through the following steps
 * Calls the contract's `VerifyMessage` function (uses both a call and query)
 * Compares the result with the ethereum address extracted from the ECDSA private key
 
+* Uses an alternative library from OpenZepplin in `alternativeRecoverTest.js`
+
 ```shell
 npm install
 npx hardhat compile
