@@ -9,7 +9,7 @@ body:
 
         Before submitting:
         1. Try searching the existing issues and discussions to see if your issue has already been reported
-        2. Try asking on [Discord](https://discordapp.com/invite/FFb9YFX)
+        2. Try asking on [Discord](https://hedera.com/discord)
         3. If you're reporting a security vulnerability, please disclose responsibly via our [bug bounty program](https://hedera.com/bounty)
   - type: textarea
     id: description
