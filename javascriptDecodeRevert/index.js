@@ -19,13 +19,13 @@
  */
 
 import {
-    AccountId
+    AccountId, ContractId, TransactionId
 } from "@hashgraph/sdk";
 
+import readline from "readline";
 import * as abiDecoder from "abi-decoder";
 import axios from "axios";
 
-let contractId = "";
 let mirrorUrl = "";
 
 function errorSignature(error_message) {
@@ -40,14 +40,82 @@ function errorSignature(error_message) {
     return error;
 }
 
-async function getErrorFromMirror(silent) {
+async function processByTransactionId(transactionId) {
+    console.log(`querying for transaction id ${transactionId}`);
+
+    let nonce = 0;
+    while (nonce >= 0) {
+        const transactionResult = await getContractResultsByTransactionId(transactionId, nonce);
+        if (transactionResult.status === "no data found") {
+            // no data found
+            nonce = -1;
+        } else {
+            if (nonce === 0) {
+                // first transaction
+                console.log(`Client api call result`);
+            } else {
+                console.log(`\nNested contract call`);
+            }
+            if (transactionResult.result === 'CONTRACT_REVERT_EXECUTED') {
+                // attempt to decode the error
+                const error = await getErrorFromMirror(transactionResult.contractId, transactionResult.blockHash, false);
+                if (error.data != "0x") {
+                    await processError(error, false, 0);
+                } else {
+                    console.dir(transactionResult);
+                }
+            } else {
+                console.dir(transactionResult);
+            }
+            nonce += 1;
+        }
+    }
+}
+
+async function getContractResultsByTransactionId(transactionId, nonce) {
+    const result = {
+        callResult : "",
+        error_message: "",
+        from: "",
+        to: "",
+        blockHash: "",
+        result: "",
+        status: "",
+        contractId: ""
+    }
+    const url = `https://${mirrorUrl}.mirrornode.hedera.com/api/v1/contracts/results/${transactionId}?nonce=${nonce}`;
+
+    const response = await axios(url, { validateStatus: false });
+    const jsonResponse = response.data;
+
+    if (response.status === 404) {
+        result.status = "no data found";
+    } else {
+        result.callResult = jsonResponse.call_result;
+        result.error_message = jsonResponse.error_message;
+        result.from = `${AccountId.fromSolidityAddress(jsonResponse.from)} (${jsonResponse.from})`;
+        result.to = `${AccountId.fromSolidityAddress(jsonResponse.to)} (${jsonResponse.to})`;
+        result.blockHash = jsonResponse.block_hash;
+        result.result = jsonResponse.result;
+        result.contractId = jsonResponse.contract_id;
+    }
+    return result;
+}
+
+async function getErrorFromMirror(contractId, blockHash, silent) {
     const error = {
         data: "",
         signature: ""
     };
 
     // get the results from mirror
-    const url = `https://${mirrorUrl}.mirrornode.hedera.com/api/v1/contracts/${contractId}/results?order=desc&limit=1`;
+    let url = `https://${mirrorUrl}.mirrornode.hedera.com/api/v1/contracts/${contractId}/results`;
+
+    if (blockHash) {
+        url = url.concat(`?order=asc&block.hash=${blockHash}&internal=true`);
+    } else {
+        url = url.concat("?order=desc");
+    }
 
     const response = await axios(url);
     const jsonResponse = response.data;
@@ -58,7 +126,7 @@ async function getErrorFromMirror(silent) {
             return errorSignature(error_message);
         } else {
             if (!silent) {
-                console.error("xno error message found");
+                console.error("no error message found");
             }
             return error;
         }
@@ -146,7 +214,7 @@ async function processError(error, silent, indent) {
             }
         }
     } else if (!silent) {
-        console.error("no error signature found");
+        console.log(`no error signature found for ${error.data}`);
     }
 }
 
@@ -155,13 +223,60 @@ async function main() {
     console.log("");
     // get the command line parameters
     const args = process.argv.slice(2);
-    if (args.length == 2) {
+    if (args.length == 1) {
         mirrorUrl = args[0];
-        contractId = args[1];
 
-        // get the signature and data for the error
-        const error = await getErrorFromMirror(false);
-        await processError(error, false, 0);
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        let userInput;
+
+        rl.question("ContractId or TransactionId ? ", async function (answer) {
+            userInput = answer;
+            // const userInput = args[1];
+            let contractId;
+            let transactionId;
+
+            try {
+                if (userInput.includes("-")) {
+                    // replace "-" with "@" and "."
+                    userInput = userInput.replace("-", "@");
+                    userInput = userInput.replace("-", ".");
+                }
+                transactionId = TransactionId.fromString(userInput).toString();
+            } catch (e) {
+                // input was not a transaction, continue
+            }
+
+            try {
+                const testContractId = ContractId.fromString(userInput).toString();
+                if (testContractId.length === userInput.length) {
+                    // a transactionId will parse to a contractId !
+                    contractId = testContractId;
+                }
+            } catch (e) {
+                // input was not a contract, continue
+            }
+
+            if (transactionId) {
+                // convert transaction id format to one understood by the API
+                transactionId = transactionId.replaceAll(".", "-");
+                transactionId = transactionId.replace("0-0-", "0.0.");
+                transactionId = transactionId.replace("@", "-");
+
+                await processByTransactionId(transactionId);
+
+            } else if (contractId) {
+                // get the signature and data for the error
+                const error = await getErrorFromMirror(contractId.toString(), "", false);
+                await processError(error, false, 0);
+            } else {
+                console.error(`${userInput} didn't resolve to a valid contractId (0.0.xxxxx) or transactionId (0.0.xxxx@yyyyy.zzzzz)`);
+            }
+            rl.close();
+        });
     } else {
         console.error("invalid command line arguments supplied, please consult README.md");
     }
