@@ -1,0 +1,12 @@
+{
+  "name": "javascriptWithEthersJs",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Example use of the Hedera JavaScript SDK along with the Ethers.js library",
+  "dependencies": {
+    "ethers": "^5.7.2",
+    "@hashgraph/sdk": "2.7.1",
+    "dotenv": "^10.0.0"
+  }
+}
