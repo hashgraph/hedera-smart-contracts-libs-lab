@@ -39,6 +39,7 @@ For convenience, the contract was compiled using `Remix` and the output from the
 * Unit testing using Chai+Mocha and Ethers.js
 * Unit testing using Chai+Mocha and Web3.js
 * Javascript Decode revert errors
+* Use of ethers.js and hashio.io to subscrive to smart contract events
 * Others TBD (Golang)
 
 ## Contributing
