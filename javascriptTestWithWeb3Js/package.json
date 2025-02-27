@@ -9,7 +9,7 @@
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@hashgraph/sdk": "^2.8.0",
+    "@hashgraph/sdk": "^2.59.0",
     "dotenv": "^10.0.0",
     "chai": "^4.3.6",
     "web3": "1.7.0",
