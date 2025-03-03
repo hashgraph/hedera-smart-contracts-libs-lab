@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "description": "Example use of the Hedera JavaScript SDK along with the abi-decoder library",
   "dependencies": {
-    "@hashgraph/sdk": "2.7.1",
+    "@hashgraph/sdk": "2.59.0",
     "abi-decoder": "^2.4.0",
     "axios": "^0.25.0",
     "dotenv": "^10.0.0"
